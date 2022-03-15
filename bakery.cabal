@@ -1,0 +1,48 @@
+cabal-version:      2.4
+name:               bakery
+version:            0.1.0.0
+synopsis:           Bake rendering to prepare
+-- description:
+homepage:           https://github.com/Abastro/
+-- bug-reports:
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Abastro
+maintainer:         abab9579@gmail.com
+copyright:          (Consult Abastro)
+category:           Graphics
+extra-source-files: CHANGELOG.md
+
+library
+    exposed-modules:
+        Bakery.Bakery
+
+    -- Modules included in this library but not exported.
+    -- other-modules:
+
+    other-extensions:
+        FlexibleContexts
+        FlexibleInstances
+        TypeApplications
+        TypeOperators
+        EmptyCase
+        MultiParamTypeClasses
+        FunctionalDependencies
+        DeriveFunctor
+        DeriveFoldable
+        DeriveTraversable
+        DerivingVia
+        TupleSections
+    build-depends:
+        base >=4.15
+      , containers ==0.6.*
+      , mtl ==2.2.*
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
+test-suite bakery-test
+    default-language: Haskell2010
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          BakeryTest.hs
+    build-depends:    base >=4.15
