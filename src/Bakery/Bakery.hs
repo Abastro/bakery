@@ -1,6 +1,7 @@
 module Bakery.Bakery
   ( Baked(..)
-  , To(..)
+  , Baking(..)
+  , KnownData(..), DataOf(..), dataVal
   ) where
 import           Control.Monad.Reader
 
@@ -9,12 +10,22 @@ import           Control.Monad.Reader
 data Baked c p r = Baked
   { bakeChar     :: !c
   , performBaked :: ReaderT p IO r
-  } deriving Functor
+  }
+  deriving Functor
 
--- |Way to obtain certain type from a complex
-class To t a | a -> t where
-  modifyT :: t -> a -> a
-  toT :: a -> t
+class Baking b d | d -> b where
+  bake :: d -> IO b
 
--- Many stuffs require IO.. so how to compose baked?
--- Need composer & prebaked (declarative)
+
+-- Staged stuffs (Get Properties -> Assign Space & Render)
+-- Properties from branches, Render from root
+-- Perhaps waste an IORef in baked..
+
+newtype DataOf t (v :: t) = DataOf t
+class KnownData t (v :: t) | v -> t where
+  dataOf :: DataOf t v
+
+dataVal :: KnownData t v => proxy v -> t
+dataVal = go dataOf where
+  go :: DataOf t v -> proxy v -> t
+  go (DataOf v) _ = v

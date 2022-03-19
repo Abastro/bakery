@@ -2,6 +2,7 @@ module Bakery.Layout where
 import           Bakery.Bakery
 import           Control.Monad.Reader
 import           Graphics.Rendering.OpenGL
+import           Optics
 
 data Reg2 = Reg2
   { begin :: Vector2 Int
@@ -16,16 +17,21 @@ data Fit2 = Fit2
 -- |Layout, for list of elements
 newtype Layout = Layout ([Fit2] -> Reg2 -> [Reg2])
 
--- |Lays the elements using Layout
+-- Perhaps Container here? Not very composable..
+
+{-
 layWith
-  :: (Monoid c, To Fit2 c, To Reg2 p, Monoid r)
-  => Layout
+  :: (Monoid c, Monoid r)`
+  => Getter c Fit2
+  -> Lens' p Reg2
+  -> Layout
   -> [Baked c p r]
   -> Baked c p r
-layWith (Layout lay) subs = Baked
+layWith ch ctx (Layout lay) subs = Baked
   { bakeChar     = foldMap bakeChar subs
   , performBaked = mconcat <$> do
-                     reg <- asks toT
-                     let regs = lay (toT . bakeChar <$> subs) reg
-                     zipWithM (\r -> local (modifyT r) . performBaked) regs subs
+                     reg <- asks (view ctx)
+                     let regs = lay (view ch . bakeChar <$> subs) reg
+                     zipWithM (\r -> local (set ctx r) . performBaked) regs subs
   }
+-}
